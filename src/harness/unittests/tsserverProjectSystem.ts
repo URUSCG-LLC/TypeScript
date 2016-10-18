@@ -99,7 +99,7 @@ namespace ts.projectSystem {
         }
 
         enqueueInstallTypingsRequest(project: server.Project, typingOptions: TypingOptions) {
-            const request = server.createInstallTypingsRequest(project, typingOptions, project.getUnresolvedImportsUnsafe(), this.globalTypingsCacheLocation);
+            const request = server.createInstallTypingsRequest(project, typingOptions, project.getUnresolvedImpors(), this.globalTypingsCacheLocation);
             this.install(request);
         }
 

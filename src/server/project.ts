@@ -179,8 +179,11 @@ namespace ts.server {
         abstract getProjectRootPath(): string | undefined;
         abstract getTypingOptions(): TypingOptions;
 
-        getUnresolvedImportsUnsafe(): Map<true> {
-            return undefined;
+        getUnresolvedImpors(): UnresolvedImports {
+            return {
+                version: 0,
+                entries: createMap<true>()
+            };
         }
 
         getSourceFile(path: Path) {

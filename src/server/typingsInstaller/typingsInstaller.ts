@@ -145,7 +145,7 @@ namespace ts.server.typingsInstaller {
                 req.projectRootPath,
                 this.safeListPath,
                 this.packageNameToTypingLocation,
-                req.unresolvedImports,
+                req.unresolvedImports.entries,
                 req.typingOptions,
                 req.compilerOptions);
 
@@ -397,7 +397,8 @@ namespace ts.server.typingsInstaller {
                 typingOptions: request.typingOptions,
                 compilerOptions: request.compilerOptions,
                 typings,
-                kind: "set"
+                kind: "set",
+                unresolvedImportsVersion: request.unresolvedImports.version
             };
         }
 

@@ -3,7 +3,7 @@
 namespace ts.server {
 
     export interface ITypingsInstaller {
-        enqueueInstallTypingsRequest(p: Project, typingOptions: TypingOptions, unresolvedImports: Map<true>): void;
+        enqueueInstallTypingsRequest(p: Project, typingOptions: TypingOptions, unresolvedImports: UnresolvedImports): void;
         attach(projectService: ProjectService): void;
         onProjectClosed(p: Project): void;
         readonly globalTypingsCacheLocation: string;
@@ -20,6 +20,7 @@ namespace ts.server {
         readonly typingOptions: TypingOptions;
         readonly compilerOptions: CompilerOptions;
         readonly typings: TypingsArray;
+        readonly unresolvedImportsVersion: number;
         poisoned: boolean;
     }
 
@@ -86,34 +87,41 @@ namespace ts.server {
 
             const entry = this.perProjectCache[project.getProjectName()];
             const result: TypingsArray = entry ? entry.typings : <any>emptyArray;
-            if (forceRefresh || !entry || typingOptionsChanged(typingOptions, entry.typingOptions) || compilerOptionsChanged(project.getCompilerOptions(), entry.compilerOptions)) {
+            const unresolvedImports = project.getUnresolvedImpors();
+            if (forceRefresh ||
+                !entry ||
+                entry.unresolvedImportsVersion !== unresolvedImports.version ||
+                typingOptionsChanged(typingOptions, entry.typingOptions) ||
+                compilerOptionsChanged(project.getCompilerOptions(), entry.compilerOptions)) {
                 // Note: entry is now poisoned since it does not really contain typings for a given combination of compiler options\typings options.
                 // instead it acts as a placeholder to prevent issuing multiple requests
                 this.perProjectCache[project.getProjectName()] = {
                     compilerOptions: project.getCompilerOptions(),
                     typingOptions,
                     typings: result,
+                    unresolvedImportsVersion: unresolvedImports.version,
                     poisoned: true
                 };
                 // something has been changed, issue a request to update typings
-                this.installer.enqueueInstallTypingsRequest(project, typingOptions, project.getUnresolvedImportsUnsafe());
+                this.installer.enqueueInstallTypingsRequest(project, typingOptions, unresolvedImports);
             }
             return result;
         }
 
         invalidateCachedTypingsForProject(project: Project) {
-            const typingOptions = project.getTypingOptions();
-            if (!typingOptions.enableAutoDiscovery) {
-                return;
-            }
-            this.installer.enqueueInstallTypingsRequest(project, typingOptions, project.getUnresolvedImportsUnsafe());
+            this.getTypingsForProject(project, /*forceRefresh*/ true);
         }
 
-        updateTypingsForProject(projectName: string, compilerOptions: CompilerOptions, typingOptions: TypingOptions, newTypings: string[]) {
+        updateTypingsForProject(projectName: string,
+            compilerOptions: CompilerOptions,
+            typingOptions: TypingOptions,
+            unresolvedImportsVersion: number,
+            newTypings: string[]) {
             this.perProjectCache[projectName] = {
                 compilerOptions,
                 typingOptions,
                 typings: toTypingsArray(newTypings),
+                unresolvedImportsVersion,
                 poisoned: false
             };
         }

@@ -287,7 +287,7 @@ namespace ts.server {
             }
             switch (response.kind) {
                 case "set":
-                    this.typingsCache.updateTypingsForProject(response.projectName, response.compilerOptions, response.typingOptions, response.typings);
+                    this.typingsCache.updateTypingsForProject(response.projectName, response.compilerOptions, response.typingOptions, response.unresolvedImportsVersion, response.typings);
                     project.updateGraph();
                     break;
                 case "invalidate":

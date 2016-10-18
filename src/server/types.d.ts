@@ -17,6 +17,11 @@ declare namespace ts.server {
         readonly kind: "discover" | "closeProject";
     }
 
+    export interface UnresolvedImports {
+        version: number;
+        entries: Map<true>;
+    }
+
     export interface DiscoverTypings extends TypingInstallerRequest {
         readonly fileNames: string[];
         readonly projectRootPath: ts.Path;
@@ -24,7 +29,7 @@ declare namespace ts.server {
         readonly compilerOptions: ts.CompilerOptions;
         readonly cachePath?: string;
         readonly kind: "discover";
-        readonly unresolvedImports: Map<true>; // set of names from unresolved import statements
+        readonly unresolvedImports: UnresolvedImports; // set of names from unresolved import statements
     }
 
     export interface CloseProject extends TypingInstallerRequest {
@@ -39,6 +44,7 @@ declare namespace ts.server {
     export interface SetTypings extends TypingInstallerResponse {
         readonly typingOptions: ts.TypingOptions;
         readonly compilerOptions: ts.CompilerOptions;
+        readonly unresolvedImportsVersion: number;
         readonly typings: string[];
         readonly kind: "set";
     }
