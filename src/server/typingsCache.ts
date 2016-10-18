@@ -1,8 +1,9 @@
 /// <reference path="project.ts"/>
 
 namespace ts.server {
+
     export interface ITypingsInstaller {
-        enqueueInstallTypingsRequest(p: Project, typingOptions: TypingOptions): void;
+        enqueueInstallTypingsRequest(p: Project, typingOptions: TypingOptions, unresolvedImports: Map<true>): void;
         attach(projectService: ProjectService): void;
         onProjectClosed(p: Project): void;
         readonly globalTypingsCacheLocation: string;
@@ -95,7 +96,7 @@ namespace ts.server {
                     poisoned: true
                 };
                 // something has been changed, issue a request to update typings
-                this.installer.enqueueInstallTypingsRequest(project, typingOptions);
+                this.installer.enqueueInstallTypingsRequest(project, typingOptions, project.getUnresolvedImportsUnsafe());
             }
             return result;
         }
@@ -105,7 +106,7 @@ namespace ts.server {
             if (!typingOptions.enableAutoDiscovery) {
                 return;
             }
-            this.installer.enqueueInstallTypingsRequest(project, typingOptions);
+            this.installer.enqueueInstallTypingsRequest(project, typingOptions, project.getUnresolvedImportsUnsafe());
         }
 
         updateTypingsForProject(projectName: string, compilerOptions: CompilerOptions, typingOptions: TypingOptions, newTypings: string[]) {

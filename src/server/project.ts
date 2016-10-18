@@ -179,6 +179,10 @@ namespace ts.server {
         abstract getProjectRootPath(): string | undefined;
         abstract getTypingOptions(): TypingOptions;
 
+        getUnresolvedImportsUnsafe(): Map<true> {
+            return undefined;
+        }
+
         getSourceFile(path: Path) {
             if (!this.program) {
                 return undefined;

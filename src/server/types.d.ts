@@ -3,12 +3,6 @@
 /// <reference path="../services/jsTyping.ts"/>
 
 declare namespace ts.server {
-    export interface CompressedData {
-        length: number;
-        compressionKind: string;
-        data: any;
-    }
-
     export interface ServerHost extends System {
         setTimeout(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
         clearTimeout(timeoutId: any): void;
@@ -30,6 +24,7 @@ declare namespace ts.server {
         readonly compilerOptions: ts.CompilerOptions;
         readonly cachePath?: string;
         readonly kind: "discover";
+        readonly unresolvedImports: Map<true>; // set of names from unresolved import statements
     }
 
     export interface CloseProject extends TypingInstallerRequest {

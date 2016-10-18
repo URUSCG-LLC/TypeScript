@@ -46,6 +46,7 @@ namespace ts.JsTyping {
         projectRootPath: Path,
         safeListPath: Path,
         packageNameToTypingLocation: Map<string>,
+        unresolvedImports: Map<true> | undefined,
         typingOptions: TypingOptions,
         compilerOptions: CompilerOptions):
         { cachedTypingPaths: string[], newTypingNames: string[], filesToWatch: string[] } {
@@ -92,6 +93,13 @@ namespace ts.JsTyping {
             getTypingNamesFromNodeModuleFolder(nodeModulesPath);
         }
         getTypingNamesFromSourceFileNames(fileNames);
+
+        // Add module names from unresolved imports
+        if (unresolvedImports) {
+            for (const name in unresolvedImports) {
+                inferredTypings[name] = undefined;
+            }
+        }
 
         // Add the cached typing locations for inferred typings that are already installed
         for (const name in packageNameToTypingLocation) {

@@ -145,6 +145,7 @@ namespace ts.server.typingsInstaller {
                 req.projectRootPath,
                 this.safeListPath,
                 this.packageNameToTypingLocation,
+                req.unresolvedImports,
                 req.typingOptions,
                 req.compilerOptions);
 

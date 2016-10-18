@@ -45,7 +45,7 @@ namespace ts.server {
         }
     }
 
-    export function createInstallTypingsRequest(project: Project, typingOptions: TypingOptions, cachePath?: string): DiscoverTypings {
+    export function createInstallTypingsRequest(project: Project, typingOptions: TypingOptions, unresolvedImports: Map<true> | undefined, cachePath?: string): DiscoverTypings {
         return {
             projectName: project.getProjectName(),
             fileNames: project.getFileNames(),
@@ -53,6 +53,7 @@ namespace ts.server {
             typingOptions,
             projectRootPath: getProjectRootPath(project),
             cachePath,
+            unresolvedImports,
             kind: "discover"
         };
     }
